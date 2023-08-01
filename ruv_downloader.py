@@ -217,7 +217,8 @@ def autoDownload():
 
 def parseArgs():
 
-    help_msg="how to use this"
+
+    help_msg="\n usage is: \n " + sys.argv[0] + " <auto|list|help> \n\n  list: Lists all show names and their ID \n  auto: downloads files according to config.ini \n  help: prints this not-great help message\n"
 
     if len(sys.argv) == 1:
         print(help_msg)
