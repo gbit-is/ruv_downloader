@@ -33,6 +33,9 @@ config.read(config_file)
 DEBUG = False
 #DEBUG = True
 
+if not DEBUG:
+    m3u8_To_MP4.logging.disable()
+
 def pprint(msg):
     try:
         print(json.dumps(msg,indent=2))
@@ -143,7 +146,9 @@ def listEpisodes(show_id):
     return show_data["data"]
 
 
-def downloadIfNotExist(url,directory,filename,friendly_name):
+
+def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
+
 
     if not os.path.isdir(directory):
         print("Directory: " + directory + " does not exist")
@@ -157,9 +162,16 @@ def downloadIfNotExist(url,directory,filename,friendly_name):
     dl_msg_pad = 35
 
     if os.path.isfile(output_file):
+        file_exists = True
+
+    if force:
+        file_exists = False
+    
+
+    if file_exists:
         print("[Episode already downloaded]".ljust(dl_msg_pad) + friendly_name)
     else:
-        #print("Downloading episode")
+        
         m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
         print("[Downloaded episode]".ljust(dl_msg_pad) + friendly_name)
 
@@ -231,7 +243,7 @@ def parseArgs():
     
 
 
-
-parseArgs()
+if __name__ == '__main__':
+     parseArgs()
 
 
