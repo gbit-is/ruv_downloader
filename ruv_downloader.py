@@ -31,7 +31,7 @@ config = configparser.ConfigParser()
 config.read(config_file)
 
 DEBUG = False
-DEBUG = True
+#DEBUG = True
 
 def pprint(msg):
     try:
@@ -143,7 +143,7 @@ def listEpisodes(show_id):
     return show_data["data"]
 
 
-def downloadIfNotExist(url,directory,filename):
+def downloadIfNotExist(url,directory,filename,friendly_name):
 
     if not os.path.isdir(directory):
         print("Directory: " + directory + " does not exist")
@@ -154,12 +154,14 @@ def downloadIfNotExist(url,directory,filename):
 
     output_file = directory + "/" + filename + ".mp4"
 
+    dl_msg_pad = 35
 
     if os.path.isfile(output_file):
-        print("Episode already downloaded")
+        print("[Episode already downloaded]".ljust(dl_msg_pad) + friendly_name)
     else:
-        print("Downloading episode")
+        #print("Downloading episode")
         m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
+        print("[Downloaded episode]".ljust(dl_msg_pad) + friendly_name)
 
 
 def autoDownload():
@@ -167,6 +169,10 @@ def autoDownload():
     if "autodownload" not in config:
         print("autodownload not configured")
         exit(1)
+
+
+    print("Status".ljust(35) + "Show".ljust(25) + "Episode".ljust(30))
+    print("|-------------------------------|---------------------|-------------------------|")
 
     for entry in config["autodownload"]:
         active = config["autodownload"][entry]
@@ -179,16 +185,20 @@ def autoDownload():
             show_data = listEpisodes(show_id)
             
             show_name_slug = show_data["slug"]
+            show_name = show_data["title"]
 
             episodes = show_data["episodes"]
             for episode in episodes:
                 episode_name_slug = episode["slug"]
+                episode_name = episode["title"]
                 episode_url = episode["file"]
+
+                friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
 
 
                 file_name = show_name_slug + "_" + episode_name_slug
 
-                downloadIfNotExist(episode_url,dl_dir,file_name)
+                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name)
 
 
 
