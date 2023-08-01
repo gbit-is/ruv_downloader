@@ -44,6 +44,7 @@ held að config.ini_example sé nokkuð solid
 - breyta path handling úr string cat yfir í os.path.join functions 
 
 
-
+# Credits:
+Hefði aldrei nennt að henda þessu saman ef ég hefði ekki haft hinn fínt kommentaða kóða [ruvsarpur](https://github.com/sverrirs/ruvsarpur) eftir [sverrirs](https://github.com/sverrirs) til að renna yfir og byggja API köllin á 
 
   
