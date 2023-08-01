@@ -1,0 +1,16 @@
+
+
+
+[autodownload]
+thattur_1 = True
+thattur_2 = False
+
+
+[thattur_1]
+show_id = 123456
+dl_dir = /path/to/dir/for/thattur_1
+
+[thattur_2]
+show_id = 98765
+dl_dir = /path/to/dir/for/thattur_2
+
