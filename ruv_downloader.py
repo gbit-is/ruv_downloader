@@ -163,6 +163,8 @@ def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
 
     if os.path.isfile(output_file):
         file_exists = True
+    else:
+        file_exists = False
 
     if force:
         file_exists = False
