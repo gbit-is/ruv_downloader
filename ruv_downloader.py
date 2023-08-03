@@ -6,12 +6,6 @@ import os
 import sys
 import configparser
 
-try:
-    import m3u8_To_MP4
-except:
-    print("Install m3u8_To_MP4")
-    print("pip install m3u8_To_MP4")
-    exit()
 
 
 
@@ -29,6 +23,36 @@ cache_expiry = 3600
 
 config = configparser.ConfigParser()
 config.read(config_file)
+
+
+if sys.platform in [ "linux", "darwin" ]:
+    import shutil
+    if "config" in config:
+        if "ffmpeg_path" in config["config"]:
+            ffmpeg_path = config["config"]["ffmpeg_path"]
+            if os.path.isdir(ffmpeg_path):
+                #sys.path.append(ffmpeg_path)
+                os.environ['PATH'] += ':' + ffmpeg_path
+            else:
+                print("Error: ffmpeg path defined but is not a directory")
+                exit()
+
+
+
+    ffmpeg_which = shutil.which("ffmpeg")
+    if ffmpeg_which == None:
+        print("Error: can not find ffmpeg in path")
+        exit()
+
+
+
+
+try:
+    import m3u8_To_MP4
+except:
+    print("Install m3u8_To_MP4")
+    print("pip install m3u8_To_MP4")
+    exit()
 
 DEBUG = False
 #DEBUG = True

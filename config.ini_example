@@ -1,5 +1,9 @@
 
 
+[config]
+ffmpeg_path = /path/to/ffmpeg_dir/
+
+
 
 [autodownload]
 thattur_1 = True
