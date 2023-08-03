@@ -70,6 +70,10 @@ def fetchShowList():
 
 def listShowIds():
 
+    if "showList" not in kvs:
+        fetchShowList()
+
+
     showList = json.loads(kvs["showList"])
     showList_age = time.time() - showList["time"]
 
