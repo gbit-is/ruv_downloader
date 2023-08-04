@@ -57,7 +57,7 @@ except:
     exit()
 
 DEBUG = False
-#DEBUG = True
+DISABLE_M3U8_OUTPUT = True
 
 if not DEBUG:
     m3u8_To_MP4.logging.disable()
@@ -177,19 +177,15 @@ def listEpisodes(show_id):
 
 
 
-def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
+def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,dryrun=False):
 
 
     if not os.path.isdir(directory):
         print("Directory: " + directory + " does not exist")
         return
-    #if directory.endswith("/"):
-        #directory = directory[:-1]
-
 
     file_name_mp4 = filename + ".mp4"
 
-    #output_file = directory + "/" + filename + ".mp4"
     output_file = os.path.join(directory,file_name_mp4)
 
 
@@ -201,6 +197,7 @@ def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
     else:
         file_exists = False
 
+
     if force:
         file_exists = False
     
@@ -208,12 +205,25 @@ def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
     if file_exists:
         print("[Episode already downloaded]".ljust(dl_msg_pad) + friendly_name)
     else:
-        
-        m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
-        print("[Downloaded episode]".ljust(dl_msg_pad) + friendly_name)
+        if dryrun:
+            print("[Not Downloading episode]".ljust(dl_msg_pad) + friendly_name)
+        else: 
+            if DISABLE_M3U8_OUTPUT:
+                print("[Downloading episode]".ljust(dl_msg_pad) + friendly_name)
+                sys.stdout = open(os.devnull, 'w')
+
+            m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
+            if DISABLE_M3U8_OUTPUT:
+                sys.stdout = sys.__stdout__
+            else:
+                print("[Downloaded episode]".ljust(dl_msg_pad) + friendly_name)
 
 
 def autoDownload():
+
+
+    force = False
+    dryrun = False
 
     if "autodownload" not in config:
         print("autodownload not configured")
@@ -282,12 +292,18 @@ def autoDownload():
 
                 if plexify_clashes:
                     files_in_dir = os.listdir(dl_dir)
-                    plexify_id_clash = False
+
 
                     for entry in files_in_dir:
-                        if "s01e" + str(episode_number) in entry:
-                            if episode_name not in entry:
+                        if episode_name not in entry:
+                            if "s01e" + str(episode_number) + " " in entry:
                                 episode_number = "1" + str(episode_number)
+
+
+                    #print(episode_name,episode_already_downloaded)
+
+                    #print(episode_already_downloaded)
+
 
 
                 friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
@@ -300,7 +316,7 @@ def autoDownload():
                     file_name = show_name_slug + "_" + episode_name_slug
 
 
-                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name)
+                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun)
 
 
 
