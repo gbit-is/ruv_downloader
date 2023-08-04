@@ -36,6 +36,8 @@ downloaderinn les [autodownload] kaflann, þar býrðu til "objects" og merkir �
 fyrir hvert object í [autodownload] kaflanum gerirðu nýjan kafla, sem vísar í show_id (tekið úr ./ruv_downloader.py list) og hvar á að save-a skjölin.
 Einnig er hægt að taka fram "plexify", sem að downloadar þá "poster" mynd af þættinum í show.jpg svo að plex sýni þáttinn fallega
 
+Rúv api-inn er ekkert æðislegur, stundum er sami þáttur á 2 mismunandi ID's og þættir geta haft kolröng númer (númer hvað þátturinn er í seríunni), til að koma til móts við það bætti ég við "plexify_clash" og þá í staðinn fyrir að eiga 2 þætti sem eru báður "s01e12" þá verður annar þeirra "s01e112" 
+
 
 held að config.ini_example sé nokkuð solid 
 

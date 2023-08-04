@@ -183,12 +183,17 @@ def downloadIfNotExist(url,directory,filename,friendly_name,force=False):
     if not os.path.isdir(directory):
         print("Directory: " + directory + " does not exist")
         return
-    if directory.endswith("/"):
-        directory = directory[:-1]
+    #if directory.endswith("/"):
+        #directory = directory[:-1]
 
 
-    output_file = directory + "/" + filename + ".mp4"
+    file_name_mp4 = filename + ".mp4"
 
+    #output_file = directory + "/" + filename + ".mp4"
+    output_file = os.path.join(directory,file_name_mp4)
+
+
+    
     dl_msg_pad = 35
 
     if os.path.isfile(output_file):
@@ -236,9 +241,26 @@ def autoDownload():
             episodes = show_data["episodes"]
 
             if "plexify" in config[entry]:
+                if config[entry]["plexify"].lower() == "true":
+                    plexify = True
+                else:
+                    plexify = False
+            else:
+                plexify = False
+
+            if "plexify_clashes" in config[entry]:
+                if config[entry]["plexify"].lower() == "true":
+                    plexify_clashes = True
+                else:
+                    plexify_clashes = False
+            else:
+                plexify_clashes = False
+
+
+
+            if plexify:
+
                 plex_image_path = os.path.join(dl_dir, "show.jpg")
-
-
                 if not os.path.isfile(plex_image_path):
                     base_image_url = show_data["image"]
                     image_url_hq = base_image_url.replace("480x","1920x").replace("quality(65)","quality(100)")
@@ -248,15 +270,35 @@ def autoDownload():
 
 
 
+             
             for episode in episodes:
+
                 episode_name_slug = episode["slug"]
                 episode_name = episode["title"]
                 episode_url = episode["file"]
 
+
+                episode_number = episode["number"]
+
+                if plexify_clashes:
+                    files_in_dir = os.listdir(dl_dir)
+                    plexify_id_clash = False
+
+                    for entry in files_in_dir:
+                        if "s01e" + str(episode_number) in entry:
+                            if episode_name not in entry:
+                                episode_number = "1" + str(episode_number)
+
+
                 friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
 
 
-                file_name = show_name_slug + "_" + episode_name_slug
+                if plexify:
+                    file_name = show_name + " - s01e" + str(episode_number) + " - " + episode_name
+
+                else:
+                    file_name = show_name_slug + "_" + episode_name_slug
+
 
                 downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name)
 
