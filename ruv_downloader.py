@@ -5,6 +5,8 @@ import dbm
 import os
 import sys
 import configparser
+import urllib.request
+
 
 
 
@@ -229,7 +231,23 @@ def autoDownload():
             show_name_slug = show_data["slug"]
             show_name = show_data["title"]
 
+
+
             episodes = show_data["episodes"]
+
+            if "plexify" in config[entry]:
+                plex_image_path = os.path.join(dl_dir, "show.jpg")
+
+
+                if not os.path.isfile(plex_image_path):
+                    base_image_url = show_data["image"]
+                    image_url_hq = base_image_url.replace("480x","1920x").replace("quality(65)","quality(100)")
+                    data = urllib.request.urlretrieve(image_url_hq,plex_image_path)
+
+
+
+
+
             for episode in episodes:
                 episode_name_slug = episode["slug"]
                 episode_name = episode["title"]
@@ -241,6 +259,7 @@ def autoDownload():
                 file_name = show_name_slug + "_" + episode_name_slug
 
                 downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name)
+
 
 
 

@@ -29,9 +29,13 @@ les config.ini skjalið, lúppar gegnum configured þætti, athugar hvort það 
 
 -- config.ini skjalið
 
+Ef þú ert t.d á mac og ert ekki með ffmpeg í path, þá geturðu búið til [config][ffmpeg_path] til þess að taka fram ffmpeg pathinn og honum er bætt við í os.path 
+
 downloaderinn les [autodownload] kaflann, þar býrðu til "objects" og merkir þau sem True ef þú vilt downloada þeim (getur sett í False eða hvaða annan streng sem er til þess að disable-a það download án þess að eyða skilgreiningunni
 
 fyrir hvert object í [autodownload] kaflanum gerirðu nýjan kafla, sem vísar í show_id (tekið úr ./ruv_downloader.py list) og hvar á að save-a skjölin.
+Einnig er hægt að taka fram "plexify", sem að downloadar þá "poster" mynd af þættinum í show.jpg svo að plex sýni þáttinn fallega
+
 
 held að config.ini_example sé nokkuð solid 
 
