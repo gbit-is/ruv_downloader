@@ -120,7 +120,7 @@ def listShowIds():
         id = str(entry["id"])
         title = entry["title"]
         avail = str(entry["web_available_episodes"])
-        print(id.ljust(showList_pad[0]) + title.ljust(showList_pad[1]) + avail.ljust(showList_pad[2]))
+        print(id.ljust(showList_pad[0]) + "|" +  title.ljust(showList_pad[1]) + "|" + avail.ljust(showList_pad[2]))
 
 def fetchEpisodeList(show_id):
 
