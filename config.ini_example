@@ -2,6 +2,8 @@
 
 [config]
 ffmpeg_path = /path/to/ffmpeg_dir/
+colors = True
+
 
 
 

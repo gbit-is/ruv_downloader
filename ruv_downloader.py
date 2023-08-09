@@ -9,6 +9,43 @@ import urllib.request
 
 
 
+class colors:
+
+
+    reset = '\033[0m'
+    bold = '\033[01m'
+    disable = '\033[02m'
+    underline = '\033[04m'
+    reverse = '\033[07m'
+    strikethrough = '\033[09m'
+    invisible = '\033[08m'
+
+    class fg:
+        black = '\033[30m'
+        red = '\033[31m'
+        green = '\033[32m'
+        orange = '\033[33m'
+        blue = '\033[34m'
+        purple = '\033[35m'
+        cyan = '\033[36m'
+        lightgrey = '\033[37m'
+        darkgrey = '\033[90m'
+        lightred = '\033[91m'
+        lightgreen = '\033[92m'
+        yellow = '\033[93m'
+        lightblue = '\033[94m'
+        pink = '\033[95m'
+        lightcyan = '\033[96m'
+
+    class bg:
+        black = '\033[40m'
+        red = '\033[41m'
+        green = '\033[42m'
+        orange = '\033[43m'
+        blue = '\033[44m'
+        purple = '\033[45m'
+        cyan = '\033[46m'
+        lightgrey = '\033[47m'
 
 
 
@@ -25,6 +62,13 @@ cache_expiry = 3600
 
 config = configparser.ConfigParser()
 config.read(config_file)
+
+
+COLOR_PRINT = False
+if "config" in config:
+    if "colors" in config["config"]:
+        if config["config"]["colors"].lower() == "true":
+            COLOR_PRINT = True
 
 
 if sys.platform in [ "linux", "darwin" ]:
@@ -71,6 +115,45 @@ def pprint(msg):
 def debug(msg):
     if DEBUG:
         print(msg)
+
+
+def colorPrint(status,show,episode,underline=False):
+
+    pad = [ 35, 35, 35 ]
+
+    if COLOR_PRINT:
+
+        if underline:
+            ul = colors.underline
+        else:
+            ul = colors.reset
+
+        if status == "Line":
+            print(colors.bg.lightgrey,colors.fg.black,"|".ljust(pad[0],"-"),"|".ljust(pad[1],"-"),"|".ljust(pad[2],"-"),colors.reset)
+            return
+
+        rs = colors.reset
+
+        if status == "[Episode already downloaded]":
+            bg = colors.bg.blue
+            fg = colors.fg.lightgrey
+        elif status == "[Downloading episode]":
+            bg = colors.bg.green
+            fg = colors.fg.black
+        elif status == "[Downloaded episode]":
+            bg = colors.bg.green
+            fg = colors.fg.black
+        elif status == "[Not Downloading episode]":
+            bg = colors.bg.red
+            fg = colors.fg.lightgrey
+        elif status == "Status":
+            bg = colors.bg.lightgrey
+            fg = colors.fg.black
+        else:
+            bg = colors.bg.black
+            fg = colors.fg.orange
+
+        print(ul,bg,fg,status.ljust(pad[0]),show.ljust(pad[1]),episode.ljust(pad[2]),rs)
 
 
 def fetchShowList():
@@ -177,7 +260,7 @@ def listEpisodes(show_id):
 
 
 
-def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,dryrun=False):
+def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,dryrun=False,underline=False):
 
 
     if not os.path.isdir(directory):
@@ -203,20 +286,19 @@ def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,
     
 
     if file_exists:
-        print("[Episode already downloaded]".ljust(dl_msg_pad) + friendly_name)
+        colorPrint("[Episode already downloaded]",friendly_name[0],friendly_name[1],underline)
     else:
         if dryrun:
-            print("[Not Downloading episode]".ljust(dl_msg_pad) + friendly_name)
+            colorPrint("[Not Downloading episode]",friendly_name[0],friendly_name[1],underline)
         else: 
             if DISABLE_M3U8_OUTPUT:
-                print("[Downloading episode]".ljust(dl_msg_pad) + friendly_name)
+                colorPrint("[Downloading episode]",friendly_name[0],friendly_name[1],underline)
                 sys.stdout = open(os.devnull, 'w')
-
             m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
             if DISABLE_M3U8_OUTPUT:
                 sys.stdout = sys.__stdout__
             else:
-                print("[Downloaded episode]".ljust(dl_msg_pad) + friendly_name)
+                colorPrint("[Downloaded episode]",friendly_name[0],friendly_name[1],underline)
 
 
 def autoDownload():
@@ -224,14 +306,15 @@ def autoDownload():
 
     force = False
     dryrun = False
+    underline = False
 
     if "autodownload" not in config:
         print("autodownload not configured")
         exit(1)
 
 
-    print("Status".ljust(35) + "Show".ljust(25) + "Episode".ljust(30))
-    print("|-------------------------------|---------------------|-------------------------|")
+    colorPrint("Status","Show","Episode")
+    colorPrint("Line","","")
 
     for entry in config["autodownload"]:
         active = config["autodownload"][entry]
@@ -300,13 +383,10 @@ def autoDownload():
                                 episode_number = "1" + str(episode_number)
 
 
-                    #print(episode_name,episode_already_downloaded)
-
-                    #print(episode_already_downloaded)
 
 
-
-                friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
+                #friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
+                friendly_name = [show_name,episode_name]
 
 
                 if plexify:
@@ -316,7 +396,8 @@ def autoDownload():
                     file_name = show_name_slug + "_" + episode_name_slug
 
 
-                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun)
+                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline)
+                underline = not underline
 
 
 
