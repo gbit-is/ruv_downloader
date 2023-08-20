@@ -3,6 +3,7 @@ import requests
 import json
 import dbm
 import os
+import pathlib
 import sys
 import configparser
 import urllib.request
@@ -323,6 +324,9 @@ def autoDownload():
             entry_config = config[entry]
             show_id = entry_config["show_id"]
             dl_dir = entry_config["dl_dir"]
+            path = pathlib.Path(dl_dir)
+            path.mkdir(parents=True, exist_ok=True)
+
             
             show_data = listEpisodes(show_id)
             
