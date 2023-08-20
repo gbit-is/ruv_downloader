@@ -65,10 +65,18 @@ config.read(config_file)
 
 
 COLOR_PRINT = False
+PLEXIFY = False
+PLEXIFY_CLASHES = False
 if "config" in config:
     if "colors" in config["config"]:
         if config["config"]["colors"].lower() == "true":
             COLOR_PRINT = True
+    if "plexify" in config["config"]:
+        if config["config"]["plexify"].lower() == "true":
+            PLEXIFY = True
+    if "plexify_clashes" in config["config"]:
+        if config["config"]["plexify_clashes"].lower() == "true":
+            PLEXIFY_CLASHES = True
 
 
 if sys.platform in [ "linux", "darwin" ]:
@@ -339,7 +347,7 @@ def autoDownload():
                 else:
                     plexify = False
             else:
-                plexify = False
+                plexify = PLEXIFY
 
             if "plexify_clashes" in config[entry]:
                 if config[entry]["plexify"].lower() == "true":
@@ -347,7 +355,7 @@ def autoDownload():
                 else:
                     plexify_clashes = False
             else:
-                plexify_clashes = False
+                plexify_clashes = PLEXIFY_CLASHES
 
 
 
