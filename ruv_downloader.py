@@ -68,6 +68,11 @@ config.read(config_file)
 COLOR_PRINT = False
 PLEXIFY = False
 PLEXIFY_CLASHES = False
+
+DEBUG = False
+DISABLE_M3U8_OUTPUT = False
+
+
 if "config" in config:
     if "colors" in config["config"]:
         if config["config"]["colors"].lower() == "true":
@@ -78,6 +83,24 @@ if "config" in config:
     if "plexify_clashes" in config["config"]:
         if config["config"]["plexify_clashes"].lower() == "true":
             PLEXIFY_CLASHES = True
+
+    if "debug" in config["config"]:
+        if config["config"]["debug"].lower() == "true":
+            DEBUG = True
+        elif config["config"]["debug"].lower() == "false":
+            DEBUG = False
+        else:
+            print("!! debug in [config] has an invalid value")
+
+    if "disable_m3u8_output" in config["config"]:
+
+        if config["config"]["disable_m3u8_output"].lower() == "true":
+            DISABLE_M3U8_OUTPUT = True
+        elif config["config"]["disable_m3u8_output"].lower() == "true":
+            DISABLE_M3U8_OUTPUT = False
+
+        else:
+            print("!!  disable_m3u8_output in [config] has an invalid value")
 
 
 if sys.platform in [ "linux", "darwin" ]:
@@ -109,8 +132,6 @@ except:
     print("pip install m3u8_To_MP4")
     exit()
 
-DEBUG = False
-DISABLE_M3U8_OUTPUT = True
 
 if not DEBUG:
     m3u8_To_MP4.logging.disable()

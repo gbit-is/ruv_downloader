@@ -5,6 +5,9 @@ ffmpeg_path = /path/to/ffmpeg_dir/
 colors = True
 plexify = True ## Virkjar þá á öll libraries
 plexify_clashes = True ## Virkjar þá á öll libraries
+debug = False ## Default, ekki prenta debug info
+disable_m3u8_output = False ## Default, ef sett sem True er m3u8 downloader info route-að í /dev/null
+
 
 
 

@@ -19,6 +19,9 @@ Ath: Ennþá mjög hrátt, ekkert error handling t.d
 Á windows:
 ..... nota wsl bara ?
 
+Á mac:
+- eins og á linux, nema settu upp ffmpeg hvernig sem þið makkafólk gerið það og setjið ffmpeg pathinn í config[config][ffmpeg_path]
+
 # How to use
 
 ./ruv_downloader.py list  
@@ -44,7 +47,6 @@ held að config.ini_example sé nokkuð solid base fyrir flesta
 # Stuff sem ég bæti kannski við, ef ég nenni
 .... eða eins og sumir kalla "to do"
 
-- Ekki nota file.exists til að ákveða hvort skjal skuli vera downloadað eða ekki, það er núþegar persistant kvs í forritinu, nota það svo það sé hægt að rename-a skjöl án þess að enda með multiples
 - hafa eitthvað error handling
 - gera basic search function fyrir þætti
 - breyta path handling úr string cat yfir í os.path.join functions 
