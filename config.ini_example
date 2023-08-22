@@ -3,6 +3,9 @@
 [config]
 ffmpeg_path = /path/to/ffmpeg_dir/
 colors = True
+plexify = True ## Virkjar þá á öll libraries
+plexify_clashes = True ## Virkjar þá á öll libraries
+
 
 
 
@@ -15,8 +18,9 @@ thattur_2 = False
 [thattur_1]
 show_id = 123456
 dl_dir = /path/to/dir/for/thattur_1
-plexify = True
-plexify_clashes = True
+#Disable-ar plexify fyrir thatt_1
+plexify = False
+plexify_clashes = False
 
 
 [thattur_2]

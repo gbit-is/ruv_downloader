@@ -269,7 +269,7 @@ def listEpisodes(show_id):
 
 
 
-def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,dryrun=False,underline=False):
+def checkIfFileExists(url,directory,filename,friendly_name,plexify,force=False,dryrun=False,underline=False):
 
 
     if not os.path.isdir(directory):
@@ -280,8 +280,6 @@ def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,
 
     output_file = os.path.join(directory,file_name_mp4)
 
-
-    
     dl_msg_pad = 35
 
     if os.path.isfile(output_file):
@@ -292,10 +290,13 @@ def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,
 
     if force:
         file_exists = False
-    
 
-    if file_exists:
-        colorPrint("[Episode already downloaded]",friendly_name[0],friendly_name[1],underline)
+    return file_exists
+
+def downloadEpisode(url,directory,filename,friendly_name,plexify,force=False,dryrun=False,underline=False):
+
+    if False:
+        pass
     else:
         if dryrun:
             colorPrint("[Not Downloading episode]",friendly_name[0],friendly_name[1],underline)
@@ -310,8 +311,36 @@ def downloadIfNotExist(url,directory,filename,friendly_name,plexify,force=False,
                 colorPrint("[Downloaded episode]",friendly_name[0],friendly_name[1],underline)
 
 
-def autoDownload():
+def kvsCheckIfDownloaded(show_id,episode_id):
 
+
+
+    if show_id in kvs:
+        show_kvs_data = json.loads(kvs[show_id])
+
+        if episode_id in show_kvs_data:
+            return True
+        else:
+            return False
+
+    else:
+        return False
+
+def kvsRegisterDownload(show_id,episode_id):
+
+    if show_id in kvs:
+        show_kvs_data = json.loads(kvs[show_id])
+    else:
+        show_kvs_data = { }
+
+    show_kvs_data[episode_id] = True
+
+    kvs[show_id] = json.dumps(show_kvs_data)
+
+
+
+
+def autoDownload():
 
     force = False
     dryrun = False
@@ -385,6 +414,11 @@ def autoDownload():
 
                 episode_number = episode["number"]
 
+
+                kvs_show_id = show_name_slug + "-" + show_id
+                kvs_episode_id = episode_name_slug
+
+
                 if plexify_clashes:
                     files_in_dir = os.listdir(dl_dir)
 
@@ -397,7 +431,6 @@ def autoDownload():
 
 
 
-                #friendly_name = show_name.ljust(25)  + episode_name.ljust(30)
                 friendly_name = [show_name,episode_name]
 
 
@@ -407,8 +440,21 @@ def autoDownload():
                 else:
                     file_name = show_name_slug + "_" + episode_name_slug
 
+                show_downloaded = False
 
-                downloadIfNotExist(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline)
+
+                if kvsCheckIfDownloaded(kvs_show_id,kvs_episode_id):
+                    colorPrint("[Episode already downloaded]",friendly_name[0],friendly_name[1],underline)
+
+                elif checkIfFileExists(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline):
+                    colorPrint("[Episode already downloaded]",friendly_name[0],friendly_name[1],underline)
+
+                    # til að samræma downloads áður en KVS management dótið kom í gagnið
+                    kvsRegisterDownload(kvs_show_id,kvs_episode_id)
+
+                else:
+                    downloadEpisode(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline)
+                    
                 underline = not underline
 
 
