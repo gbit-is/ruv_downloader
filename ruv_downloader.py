@@ -316,24 +316,30 @@ def checkIfFileExists(url,directory,filename,friendly_name,plexify,force=False,d
 
 def downloadEpisode(url,directory,filename,friendly_name,plexify,force=False,dryrun=False,underline=False):
 
-    if False:
-        pass
-    else:
-        if dryrun:
-            colorPrint("[Not Downloading episode]",friendly_name[0],friendly_name[1],underline)
-        else: 
-            if DISABLE_M3U8_OUTPUT:
-                colorPrint("[Downloading episode]",friendly_name[0],friendly_name[1],underline)
-                sys.stdout = open(os.devnull, 'w')
-            m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
-            if DISABLE_M3U8_OUTPUT:
-                sys.stdout = sys.__stdout__
-            else:
-                colorPrint("[Downloaded episode]",friendly_name[0],friendly_name[1],underline)
 
+    success = True
+
+    if dryrun:
+        colorPrint("[Not Downloading episode]",friendly_name[0],friendly_name[1],underline)
+    else: 
+        if DISABLE_M3U8_OUTPUT:
+            colorPrint("[Downloading episode]",friendly_name[0],friendly_name[1],underline)
+            sys.stdout = open(os.devnull, 'w')
+
+        try:
+            m3u8_To_MP4.multithread_download(url,mp4_file_dir=directory,mp4_file_name=filename)
+        except:
+            success = False
+
+
+        if DISABLE_M3U8_OUTPUT:
+            sys.stdout = sys.__stdout__
+        else:
+            colorPrint("[Downloaded episode]",friendly_name[0],friendly_name[1],underline)
+
+    return success
 
 def kvsCheckIfDownloaded(show_id,episode_id):
-
 
 
     if show_id in kvs:
@@ -474,10 +480,78 @@ def autoDownload():
                     kvsRegisterDownload(kvs_show_id,kvs_episode_id)
 
                 else:
-                    downloadEpisode(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline)
+                    success = downloadEpisode(episode_url,dl_dir,file_name,friendly_name,plexify,force,dryrun,underline)
+                    if success:
+                        kvsRegisterDownload(kvs_show_id,kvs_episode_id)
                     
                 underline = not underline
 
+
+
+
+
+def manage_show_kvs(action,show_name="null",episode_name="null"):
+
+
+
+    if action == "list_shows":
+
+        for entry in kvs.keys():
+            entry = entry.decode()
+
+            if entry == "showList":
+                pass
+            elif entry.startswith("show_"):
+                pass
+            else:
+                print(entry)
+
+    elif action == "list_episodes":
+        if show_name not in kvs:
+            print("Show not found in kvs")
+        else:
+            episode_list = json.loads(kvs[show_name])
+            print("KVS entries for show: " + show_name)
+            for episode in episode_list:
+                print(episode)
+
+    
+    elif action == "delete_show":
+
+        if show_name not in kvs:
+            print("Show not found in kvs")
+        else:
+            print("Deleting kvs entries for: " + show_name)
+            del kvs[show_name]
+
+    elif action == "delete_episode":
+        if show_name not in kvs:
+            print("Show not found in kvs")
+        else:
+            episode_list = json.loads(kvs[show_name])
+
+            if episode_name not in episode_list:
+                print("Episode not found in kvs")
+            else:
+                print("Removing episode: " + episode_name + " from show: " + show_name)
+                del episode_list[episode_name]
+                kvs[show_name] = json.dumps(episode_list)
+        
+
+    elif action == "delete_all":
+        for entry in kvs.keys():
+            entry = entry.decode()
+
+            if entry == "showList":
+                pass
+            elif entry.startswith("show_"):
+                pass
+            else:
+                del kvs[entry]
+
+
+
+    
 
 
 
