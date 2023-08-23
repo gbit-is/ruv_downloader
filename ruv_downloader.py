@@ -559,7 +559,7 @@ def manage_show_kvs(action,show_name="null",episode_name="null"):
 def parseArgs():
 
 
-    help_msg="\n usage is: \n " + sys.argv[0] + " <auto|list|help> \n\n  list: Lists all show names and their ID \n  auto: downloads files according to config.ini \n  help: prints this not-great help message\n"
+    help_msg="\n usage is: \n " + sys.argv[0] + " <auto|list|kvs|help> \n\n  list: Lists all show names and their ID \n  auto: downloads files according to config.ini \n\n\n The KVS command manages the list of downloaded files, it only deals with the download records, not the files themselves\n kvs [list_shows|list_episodes|delete_show|delete_episode|delete_all] <show_name> <episode_name>\n  kvs list_shows # lists shows \n  kvs list_episodes {show_name} # lists episodes of a show\n  kvs delete_show {show_name} # Delete all records of a show \n  kvs delete_episode {show_name} {episode_name} # delete the record of a single episode \n  kvs delete_all # .... deletes all records \n\n\n  help: prints this not-great help message\n"
 
     if len(sys.argv) == 1:
         print(help_msg)
@@ -578,6 +578,37 @@ def parseArgs():
     if "list" in action.lower():
         listShowIds()
         exit(0)
+
+    if "kvs" in action.lower():
+
+        kvs_args = { 
+            "kvs_action"    :   "none",
+            "show_name"     :   "none",
+            "episode_name"  :   "none"
+        }
+
+        kvs_options = [ "script", "action","kvs_action","show_name","episode_name" ]
+
+        if len(sys.argv) == 2:
+            print(help_msg)
+            exit()
+
+        arg_counter = 0
+        for entry in sys.argv:
+            kvs_args[kvs_options[arg_counter]] = entry
+            arg_counter += 1
+
+
+
+        manage_show_kvs(kvs_args["kvs_action"],kvs_args["show_name"],kvs_args["episode_name"])
+
+        
+
+
+        exit(0)
+
+
+
 
     print("Action: " + action + " is not defined")
     print(help_msg)
