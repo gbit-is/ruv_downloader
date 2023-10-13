@@ -96,7 +96,7 @@ if "config" in config:
 
         if config["config"]["disable_m3u8_output"].lower() == "true":
             DISABLE_M3U8_OUTPUT = True
-        elif config["config"]["disable_m3u8_output"].lower() == "true":
+        elif config["config"]["disable_m3u8_output"].lower() == "false":
             DISABLE_M3U8_OUTPUT = False
 
         else:
