@@ -210,7 +210,34 @@ def fetchShowList():
 
     x = open(temp_file).read()
     y = json.loads(x)
-    pprint(y)
+
+
+    shows = { }
+    shows["id"] = { }
+    shows["slug"] = { }
+
+    for entry in y["panels"]:
+
+        for n in entry["programs"]:
+
+            show_slug = n["slug"]
+            show_id = n["id"]
+
+            if show_slug not in shows["slug"]:
+                shows["slug"][show_slug] = { }
+                shows["slug"][show_slug]["data"] = n 
+                shows["slug"][show_slug]["list"] = [ ]
+            if show_id not in shows["id"]:
+                shows["id"][show_id] = { }
+                shows["id"][show_id]["data"] = n
+                shows["id"][show_id]["list"] = [ ]
+
+            for episode in n["episodes"]:
+                shows["slug"][show_slug]["list"].append(episode)
+                shows["id"][show_id]["list"].append(episode)
+
+    
+    kvs["shitfix"] = json.dumps(shows)
 
 
 
@@ -388,6 +415,7 @@ def autoDownload():
     colorPrint("Status","Show","Episode")
     colorPrint("Line","","")
 
+
     for entry in config["autodownload"]:
         active = config["autodownload"][entry]
         if active.lower() == "true":
@@ -399,14 +427,22 @@ def autoDownload():
             path.mkdir(parents=True, exist_ok=True)
 
             
-            show_data = listEpisodes(show_id)
+            #show_data = listEpisodes(show_id)
+            nn = kvs["shitfix"].decode()
+            sd = json.loads(nn)
+            show_data = sd["id"][show_id]["data"]
+            #show_data = kvs["shitfix"]["id"]["show_id"]["data"]
             
+
+
             show_name_slug = show_data["slug"]
             show_name = show_data["title"]
 
 
 
-            episodes = show_data["episodes"]
+            episodes = sd["id"][show_id]["list"]
+
+            #episodes = show_data["episodes"]
 
             if "plexify" in config[entry]:
                 if config[entry]["plexify"].lower() == "true":
@@ -441,12 +477,17 @@ def autoDownload():
              
             for episode in episodes:
 
-                episode_name_slug = episode["slug"]
+                pprint(episode)
+                episode_name_slug = episode["title"]
                 episode_name = episode["title"]
                 episode_url = episode["file"]
 
 
-                episode_number = episode["number"]
+                episode_number = episode["id"]
+                en = ''.join(ch for ch in episode_number if ch.isdigit())
+
+                episode_number = en
+                #episode_number = episode["number"]
 
 
                 kvs_show_id = show_name_slug + "-" + show_id
@@ -621,9 +662,35 @@ def parseArgs():
     print(help_msg)
     exit(1)
     
+def shitfix_list():
+
+
+    x = kvs["shitfix"].decode()
+    data = json.loads(x)
+    
+    maxlen = 0
+
+    for i in data["id"]:
+        name = data["id"][i]["data"]["title"]
+        if len(name) > maxlen:
+            maxlen = len(name)
+
+    for i in data["id"]:
+        a = data["id"][i]["data"]["title"]
+        print(a.ljust(maxlen + 5) , i)
+
+
+    
+def download(show_id):
+
+    pass
 
 
 #if __name__ == '__main__':
      #parseArgs()
 
-fetchShowList()
+#utdownload("1234")
+#fetchShowList()
+#shitfix_list()
+#download("34358")
+autoDownload()
