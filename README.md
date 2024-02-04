@@ -1,3 +1,11 @@
+# Virkar ekki lengur
+# [Ný Útgáfa hér](https://github.com/gbit-is/ruv_downloader_v2)
+
+#   
+#   
+#   
+
+
 # ruv_downloader
 
 # About
